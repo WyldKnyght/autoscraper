@@ -26,7 +26,7 @@ def unique_hashable(hashable_items):
 
 def get_random_str(n):
     chars = string.ascii_lowercase + string.digits
-    return ''.join(random.choice(chars) for i in range(n))
+    return ''.join(random.choice(chars) for _ in range(n))
 
 
 def get_non_rec_text(element):
