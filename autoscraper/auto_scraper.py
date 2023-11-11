@@ -103,12 +103,11 @@ class AutoScraper(object):
         user_headers = request_args.pop("headers", {})
         headers.update(user_headers)
         res = requests.get(url, headers=headers, **request_args)
-        if res.encoding == "ISO-8859-1" and not "ISO-8859-1" in res.headers.get(
+        if res.encoding == "ISO-8859-1" and "ISO-8859-1" not in res.headers.get(
             "Content-Type", ""
         ):
             res.encoding = res.apparent_encoding
-        html = res.text
-        return html
+        return res.text
 
     @classmethod
     def _get_soup(cls, url=None, html=None, request_args=None):
@@ -291,7 +290,7 @@ class AutoScraper(object):
         )
         stack["url"] = url if is_full_url else ""
         stack["hash"] = hashlib.sha256(str(stack).encode("utf-8")).hexdigest()
-        stack["stack_id"] = "rule_" + get_random_str(4)
+        stack["stack_id"] = f"rule_{get_random_str(4)}"
         return stack
 
     def _get_result_for_child(self, child, soup, url):
@@ -302,10 +301,7 @@ class AutoScraper(object):
     @staticmethod
     def _fetch_result_from_child(child, wanted_attr, is_full_url, url, is_non_rec_text):
         if wanted_attr is None:
-            if is_non_rec_text:
-                return get_non_rec_text(child)
-            return child.getText().strip()
-
+            return get_non_rec_text(child) if is_non_rec_text else child.getText().strip()
         if wanted_attr not in child.attrs:
             return None
 
